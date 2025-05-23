@@ -1,0 +1,9 @@
+A Saga is a sequence of local transactions, where each transaction updates data within a single service and triggers the next transaction in the saga via a message/event. If a step fails, the saga executes compensating transactions to undo the changes made by previous steps. Example:
+Order Service → emits OrderCreated. || Payment Service → listens to OrderCreated, processes payment, emits PaymentSuccessful. || Inventory Service → listens to PaymentSuccessful, reserves items, emits InventoryReserved.
+
+If Inventory Service fails, it emits InventoryFailed, and earlier services perform compensating actions (e.g., refund payment, cancel order).
+2. Orchestration: A central orchestrator controls the saga and tells each service what to do.
+Orchestrator → tells Order Service to create order.
+Then tells Payment Service to charge.
+Then tells Inventory Service to reserve stock.
+If any step fails, orchestrator triggers compensation (e.g., refund, cancel order).
